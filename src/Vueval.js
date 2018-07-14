@@ -1,5 +1,4 @@
 import Val from './Val';
-import { call, getProp, flip } from './operators'
 
 export default class Vueval {
 	constructor(context = null) {
@@ -12,32 +11,34 @@ export default class Vueval {
 	}
 
 	touch() {
-		Array.from(this._valsMap.values()).forEach(val => val.touch());
+		this.vals.forEach(val => val.touch());
 	}
 
 	reset() {
-		Array.from(this._valsMap.values()).forEach(val => val.reset());
+		this.vals.forEach(val => val.reset());
 	} 
 
+	get(name) {
+		return this._valsMap.get(name);
+	}
+
 	get hasError() {
-		return Array.from(this._valsMap.values()).some(val => val.hasError);
+		return this.vals.some(val => val.hasError);
 	}
 
-	get invalid() {
-		return Array.from(this._valsMap.values()).some(val => val.isInvalid);
+	get isInvalid() {
+		return this.vals.some(val => val.isInvalid);
 	}
 
-	unWatch(name) {	
-		this._valsMap.values().forEach(call('unWatch'));
+	get reasons() {
+		return this.vals.reduce((set, val) => {
+			const reasons = Array.from(val.reasons);
+			set.add(reasons)
+		}, new Set)
 	}
 
-	watch(name) {
-		const val = this._valsMap.get(name);
-
-		if (this._watch && val) {
-			const watcher = this._watch(name, val.validate.bind(val), ...this._watchArgs);
-			val.setWatcher(watcher);
-		}
+	get vals() {
+		return Array.from(this._valsMap.values());
 	}
 
 	addVal(name, predicate) {
@@ -59,19 +60,12 @@ export default class Vueval {
 		} 
 	}
 
-	setWatch(fn, ...options) {
-		this._watch = fn;
-		this._watchArgs = options;
-	}
-
 	destroy() {
-		this._valsMap.values().forEach(call('destroy'));
+		this.values.forEach(val => val.destroy());
 		this._valsMap.clear();
 		
 		this._valsMap   = null;
 		this._context   = null;
-		this._watch     = null;
-		this._watchArgs = null;
 	}
 }
 

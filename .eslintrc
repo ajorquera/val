@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "plugin:vue/essential",
+    "eslint:recommended"
+  ],
+  "rules": {
+    "vue/attribute-hyphenation": [
+      "error",
+      "always"
+    ],
+    "vue/html-indent": [
+      "error",
+      "tab"
+    ],
+    "vue/attributes-order": "error",
+    "vue/html-quotes": [
+      "error",
+      "double"
+    ],
+    "vue/order-in-components": "error"
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  }
+}

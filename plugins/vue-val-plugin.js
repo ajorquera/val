@@ -1,9 +1,8 @@
 import Vueval from '../src/Vueval';
-import { isEmpty, isPredicate } from '../src/utils'
-import { getProp } from '../src/operators'
+import { isEmpty } from '../src/utils'
 
 export default {
-	install (Vue, options) {
+	install (Vue) {
 		Vue.mixin({
 			data () {
 				return {
@@ -16,15 +15,13 @@ export default {
 
 				if(isEmpty(validations)) return;
 
-				validations = Object.entries(validations).filter(([name, predicate]) => isPredicate(predicate));
-
 				const data = Object.entries(this.$data).filter(([name]) => name !== '$vueval');
 
-				validations.forEach(([name, validation]) => {
+				data.forEach(([name]) => {
+					const validation = validations[name]
 					const $vueval = this.$data.$vueval;
-					$vueval.setWatch(this.$watch.bind(this), {immediate: true});
-					$vueval.addVal(name, validation);
-					$vueval.watch(name);
+					const val = $vueval.addVal(name, validation);
+					this.$watch(name, val.validate.bind(val));
 					window.vueval = $vueval;
 				})
 			}

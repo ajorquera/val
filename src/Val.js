@@ -36,16 +36,8 @@ export default class Val {
 		this.validate();
 	}
 
-	setWatcher(watcher) {
-		this._unWatch = watcher;
-	}
-
-	unWatch() {
-		return isFunction(this._unWatch) && this._unWatch();
-	}
-	
 	validate(val) {
-		const result = this._validation(val);
+		const result = this._validation.call(this._context, val);
 		
 		if(isNotBoolean(result)) throw new Error(`${this.name}: Predicate doesn't return a boolean`);
 		
@@ -84,7 +76,6 @@ export default class Val {
 	}
 
 	destroy() {
-		this.unWatch();
 		this.reasons.clear();
 
 		this.reasons     = null;
@@ -94,7 +85,6 @@ export default class Val {
 		this.reasons     = null;
 
 		this._context    = null;
-		this._unWatch    = null;
 		this._validation = null;
 	}
 }

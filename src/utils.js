@@ -1,4 +1,4 @@
-import { curry, all, any, compose, every, ifElse, not } from './operators'
+import { curry, any, compose, every, not } from './operators'
 
 // is
 export const isArray = (...args) => args.every(Array.isArray);
@@ -32,11 +32,9 @@ export const isUndefined  = isEqual(undefined);
 export const isPredicate = any(isFunction, isFunctionMap);
 
 // logical
-const gt = (a, b) => a > b;
-const lt = (a, b) => a < b;
-const bt = (a,b,c) => greaterThan(a,b) && lessThan(a,c);
-
-
+export const greaterThan = curry((a, b) => a > b);
+export const lessThan = curry((a, b) => a < b);
+export const between = curry((a,b,c) => every(greaterThan(c,b), lessThan(c,a)));
 
 // strings
 export const matchRegex = curry((regex, val) => regex.test(val));
@@ -52,9 +50,6 @@ export const isEmpty = any(isEmptyArray, isEmptyObject, isEmptyString, isNull, i
 export const isRequired = not(isEmpty);
 
 export const toLength = compose(objectLength, arrayLength);
-export const greaterThan = curry(compose(gt, toLength));
-export const lessThan = curry(compose(lt, toLength));
-export const between = curry(compose(bt, toLength));
 
 export const numbOrStr = any(isNumber, isString);
 export const maxLength = compose(lessThan, toLength)
