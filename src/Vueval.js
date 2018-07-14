@@ -1,7 +1,7 @@
 import Val from './Val';
-import { call, getProp } from './operators'
+import { call, getProp, flip } from './operators'
 
-export class Vueval {
+export default class Vueval {
 	constructor(context = null) {
 		this._context = context;
 		this._valsMap = new Map();
@@ -12,15 +12,19 @@ export class Vueval {
 	}
 
 	touch() {
-		this._valsMap.values().forEach(call('touch'));
+		Array.from(this._valsMap.values()).forEach(val => val.touch());
 	}
 
 	reset() {
-		this._valsMap.values().forEach(call('touch'));
+		Array.from(this._valsMap.values()).forEach(val => val.reset());
 	} 
 
 	get hasError() {
-		return this._valsMap.values().every(getProp('hasError'));
+		return Array.from(this._valsMap.values()).some(val => val.hasError);
+	}
+
+	get invalid() {
+		return Array.from(this._valsMap.values()).some(val => val.isInvalid);
 	}
 
 	unWatch(name) {	
@@ -31,13 +35,13 @@ export class Vueval {
 		const val = this._valsMap.get(name);
 
 		if (this._watch && val) {
-			const watcher = this._watch(name, val.validate.bind(val));
+			const watcher = this._watch(name, val.validate.bind(val), ...this._watchArgs);
 			val.setWatcher(watcher);
 		}
 	}
 
-	addVal(name, value) {
-		const val = new Val(name, value, this._context);
+	addVal(name, predicate) {
+		const val = new Val(name, predicate, this._context);
 
 		this._valsMap.set(name, val);
 		this[name] = val;
@@ -55,17 +59,19 @@ export class Vueval {
 		} 
 	}
 
-	setWatch(fn) {
+	setWatch(fn, ...options) {
 		this._watch = fn;
+		this._watchArgs = options;
 	}
 
 	destroy() {
 		this._valsMap.values().forEach(call('destroy'));
 		this._valsMap.clear();
 		
-		this._valsMap = null;
-		this._context = null;
-		this._watch   = null;
+		this._valsMap   = null;
+		this._context   = null;
+		this._watch     = null;
+		this._watchArgs = null;
 	}
 }
 

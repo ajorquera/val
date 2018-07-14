@@ -1,28 +1,31 @@
-import Val from '../src/Val';
+import Vueval from '../src/Vueval';
+import { isEmpty, isPredicate } from '../src/utils'
+import { getProp } from '../src/operators'
 
 export default {
 	install (Vue, options) {
 		Vue.mixin({
 			data () {
 				return {
-					$vueval: new Val(this),
-					vals: new Map()
+					$vueval: new Vueval(this)
 				}
 			},
 
 			created() {
-				let validations = this.$options.vueval;
+				let validations = this.$options.validations;
 
 				if(isEmpty(validations)) return;
 
-				validations = validations.filter(isPredicate);
+				validations = Object.entries(validations).filter(([name, predicate]) => isPredicate(predicate));
 
-				const data = Object.entries(this.$data).flat();
+				const data = Object.entries(this.$data).filter(([name]) => name !== '$vueval');
 
-				validations = data.forEach(([name, value]) => {
-					this.$vueval.setWatch(this.$watch.bind(this));
-					this.$vueval.setVal(name, value);
-					this.$vueval.watch(name);
+				validations.forEach(([name, validation]) => {
+					const $vueval = this.$data.$vueval;
+					$vueval.setWatch(this.$watch.bind(this), {immediate: true});
+					$vueval.addVal(name, validation);
+					$vueval.watch(name);
+					window.vueval = $vueval;
 				})
 			}
 		});

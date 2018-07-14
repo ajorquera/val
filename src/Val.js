@@ -3,15 +3,15 @@ import { not } from './operators'
 
 const isNotBoolean = not(isBoolean);
 
-class Val {
+export default class Val {
 	constructor(name, validation, context) {
 		this.name = name;
 		this.reasons = new Set();
 
 		this._context = context;
 
-		this.reset();
 		this._setValidation(validation);
+		this.reset();
 	}
 
 	static create(...args) {
@@ -31,9 +31,9 @@ class Val {
 	}
 
 	reset() {
-		this.isInvalid = false;
 		this.isTouched = false;
 		this.reasons.clear();
+		this.validate();
 	}
 
 	setWatcher(watcher) {
@@ -49,7 +49,7 @@ class Val {
 		
 		if(isNotBoolean(result)) throw new Error(`${this.name}: Predicate doesn't return a boolean`);
 		
-		this.invalid = result;
+		this.isInvalid = !result;
 	}
 	
 	_setValidation(fn) {
@@ -58,7 +58,15 @@ class Val {
 			const fnMap = fn;
 			const entries = Object.entries(fnMap);
 			
-			this._validation = all(transform(entries, this._setReason.bind(this)))
+			this._validation = (val) => {
+				let isValid = false;
+				entries.forEach(([name, predicate]) => {
+					isValid = predicate(val);
+					this._setReason(name, !isValid);
+				});
+
+				return isValid;
+			};
 
 		} else if(isFunction(fn)) {
 			this._validation = fn.bind(this._context);
@@ -71,7 +79,7 @@ class Val {
 		if(isValid) {
 			this.reasons.add(name);
 		} else {
-			this.reasons.remove(name)
+			this.reasons.delete(name)
 		}
 	}
 

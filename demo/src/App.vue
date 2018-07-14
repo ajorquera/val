@@ -12,6 +12,21 @@ export default {
   name: 'app',
   components: {
     HelloWorld
+  },
+
+  data() {
+    return {
+      name: null,
+      lastName: null
+    }
+  },
+
+  validations: {
+    name: () => true,
+    lastName: {
+      isString: (val) => typeof val === 'string',
+      isNumber: (val) => typeof val === 'number',
+    }
   }
 }
 </script>
