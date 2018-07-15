@@ -1,5 +1,5 @@
-import { isFunctionMap, isFunction, isBoolean } from './utils'
-import { not } from './operators'
+import { isFunctionMap, isFunction, isBoolean } from './utils';
+import { not } from './operators';
 
 const isNotBoolean = not(isBoolean);
 
@@ -37,7 +37,7 @@ export default class Val {
 	}
 
 	validate(val) {
-		const result = this._validation.call(this._context, val);
+		const result = this._validation(val);
 		
 		if(isNotBoolean(result)) throw new Error(`${this.name}: Predicate doesn't return a boolean`);
 		
@@ -53,7 +53,7 @@ export default class Val {
 			this._validation = (val) => {
 				let isValid = false;
 				entries.forEach(([name, predicate]) => {
-					isValid = predicate(val);
+					isValid = predicate.call(this._context, val);
 					this._setReason(name, !isValid);
 				});
 
@@ -71,7 +71,7 @@ export default class Val {
 		if(isValid) {
 			this.reasons.add(name);
 		} else {
-			this.reasons.delete(name)
+			this.reasons.delete(name);
 		}
 	}
 

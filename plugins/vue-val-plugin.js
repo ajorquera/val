@@ -1,5 +1,5 @@
 import Vueval from '../src/Vueval';
-import { isEmpty } from '../src/utils'
+import { isEmpty } from '../src/utils';
 
 export default {
 	install (Vue) {
@@ -7,7 +7,7 @@ export default {
 			data () {
 				return {
 					$vueval: new Vueval(this)
-				}
+				};
 			},
 
 			created() {
@@ -23,8 +23,8 @@ export default {
 					const val = $vueval.addVal(name, validation);
 					this.$watch(name, val.validate.bind(val));
 					window.vueval = $vueval;
-				})
+				});
 			}
 		});
 	}
-}
+};

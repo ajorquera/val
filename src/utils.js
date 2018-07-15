@@ -18,13 +18,13 @@ const objectLength = (obj) => Object.keys(obj).length;
 
 export const isEmptyString = compose(isEqualZero, stringLength);
 export const isEmptyObject = compose(isEqualZero, objectLength);
-export const isEmptyArray  = compose(isEqualZero, arrayLength)
+export const isEmptyArray  = compose(isEqualZero, arrayLength);
 
-export const isFunction = isPrimitive('function')
-export const isBoolean  = isPrimitive('boolean')
-export const isNumber   = isPrimitive('number')
-export const isString   = isPrimitive('string')
-export const isObject   = isPrimitive('object')
+export const isFunction = isPrimitive('function');
+export const isBoolean  = isPrimitive('boolean');
+export const isNumber   = isPrimitive('number');
+export const isString   = isPrimitive('string');
+export const isObject   = isPrimitive('object');
 
 export const isNull       = isEqual(null);
 export const isUndefined  = isEqual(undefined);
@@ -52,11 +52,11 @@ export const isRequired = not(isEmpty);
 export const toLength = compose(objectLength, arrayLength);
 
 export const numbOrStr = any(isNumber, isString);
-export const maxLength = compose(lessThan, toLength)
-export const minLength = compose(greaterThan, toLength)
+export const maxLength = compose(lessThan, toLength);
+export const minLength = compose(greaterThan, toLength);
 
-export const isAlphaNumeric = every(hasLetters, hasNumbers, not(hasSpace))
+export const isAlphaNumeric = every(hasLetters, hasNumbers, not(hasSpace));
 
 export default {
 	
-}
+};

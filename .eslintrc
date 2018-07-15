@@ -8,6 +8,8 @@
     "eslint:recommended"
   ],
   "rules": {
+    "comma-dangle": ["error", "never"],
+    "semi": ["error", "always"],
     "vue/attribute-hyphenation": [
       "error",
       "always"
