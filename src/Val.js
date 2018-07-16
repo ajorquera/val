@@ -37,11 +37,11 @@ export default class Val {
 	}
 
 	validate(val) {
-		const result = this._validation(val);
+		const isValid = this._validation(val);
 		
-		if(isNotBoolean(result)) throw new Error(`${this.name}: Predicate doesn't return a boolean`);
+		if(isNotBoolean(isValid)) throw new Error(`${this.name}: Predicate doesn't return a boolean`);
 		
-		this.isInvalid = !result;
+		this.isInvalid = !isValid;
 	}
 	
 	_setValidation(fn) {
@@ -51,13 +51,12 @@ export default class Val {
 			const entries = Object.entries(fnMap);
 			
 			this._validation = (val) => {
-				let isValid = false;
 				entries.forEach(([name, predicate]) => {
-					isValid = predicate.call(this._context, val);
-					this._setReason(name, !isValid);
+					const isValid = predicate.call(this._context, val);
+					this._setReason(name, isValid);
 				});
 
-				return isValid;
+				return this.reasons.size === 0;
 			};
 
 		} else if(isFunction(fn)) {
@@ -69,9 +68,9 @@ export default class Val {
 
 	_setReason(name, isValid) {
 		if(isValid) {
-			this.reasons.add(name);
-		} else {
 			this.reasons.delete(name);
+		} else {
+			this.reasons.add(name);
 		}
 	}
 

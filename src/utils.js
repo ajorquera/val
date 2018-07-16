@@ -1,4 +1,4 @@
-import { curry, any, compose, every, not } from './operators'
+import { curry, any, compose, every, not, flip } from './operators';
 
 // is
 export const isArray = (...args) => args.every(Array.isArray);
@@ -7,7 +7,8 @@ export const isObjEqual = (a,b) => JSON.stringify(a) === JSON.stringify(b)
 export const isArrayEqual = (a, b) => isArray(a, b) ? a.all((item,i) => a[i] === b[i]) : false;
 export const isPrimitive = curry((primitive, value) => typeof value === primitive);
 export const isEmail = (str) => str.indexOf('@') > 0;
-export const isFunctionMap = (fnMap) => fnMap && Object.values(fnMap).every(isFunction);
+//TODO COMPOSE BETTER
+export const isFunctionMap = (fnMap) => fnMap && Object.values(fnMap).length > 0 && Object.values(fnMap).every(isFunction);
 
 export const isEqualZero = isEqual(0);
 
@@ -32,8 +33,8 @@ export const isUndefined  = isEqual(undefined);
 export const isPredicate = any(isFunction, isFunctionMap);
 
 // logical
-export const greaterThan = curry((a, b) => a > b);
-export const lessThan = curry((a, b) => a < b);
+export const greaterThan = curry((a, b) => b > a);
+export const lessThan = curry((a, b) => b < a);
 export const between = curry((a,b,c) => every(greaterThan(c,b), lessThan(c,a)));
 
 // strings
@@ -56,7 +57,3 @@ export const maxLength = compose(lessThan, toLength);
 export const minLength = compose(greaterThan, toLength);
 
 export const isAlphaNumeric = every(hasLetters, hasNumbers, not(hasSpace));
-
-export default {
-	
-};

@@ -15,10 +15,10 @@ export default {
 
 				if(isEmpty(validations)) return;
 
-				const data = Object.entries(this.$data).filter(([name]) => name !== '$vueval');
+				const data = Object.entries(this.$data).filter(([name]) => name !== '$vueval' && validations[name]);
 
 				data.forEach(([name]) => {
-					const validation = validations[name]
+					const validation = validations[name];
 					const $vueval = this.$data.$vueval;
 					const val = $vueval.addVal(name, validation);
 					this.$watch(name, val.validate.bind(val));
